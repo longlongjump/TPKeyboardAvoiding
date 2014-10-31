@@ -174,18 +174,22 @@ static const int kStateKey;
 - (void)TPKeyboardAvoiding_findTextFieldAfterTextField:(UIView*)priorTextField beneathView:(UIView*)view minY:(CGFloat*)minY foundView:(UIView**)foundView {
     // Search recursively for text field or text view below priorTextField
     CGFloat priorFieldOffset = CGRectGetMinY([self convertRect:priorTextField.frame fromView:priorTextField.superview]);
-    for ( UIView *childView in view.subviews ) {
+    NSArray *subviews = [view.subviews sortedArrayUsingComparator:^NSComparisonResult(UIView *obj1, UIView *obj2) {
+        return obj1.frame.origin.x > obj2.frame.origin.x ? NSOrderedAscending : NSOrderedDescending;
+    }];
+    
+    for ( UIView *childView in subviews ) {
         if ( childView.hidden ) continue;
         if ( ([childView isKindOfClass:[UITextField class]] || [childView isKindOfClass:[UITextView class]]) && childView.isUserInteractionEnabled) {
             CGRect frame = [self convertRect:childView.frame fromView:view];
             if ( childView != priorTextField
-                    && CGRectGetMinY(frame) >= priorFieldOffset
-                    && CGRectGetMinY(frame) < *minY &&
-                    !(frame.origin.y == priorTextField.frame.origin.y
-                      && frame.origin.x < priorTextField.frame.origin.x) ) {
-                *minY = CGRectGetMinY(frame);
-                *foundView = childView;
-            }
+                && CGRectGetMinY(frame) >= priorFieldOffset
+                && CGRectGetMinY(frame) <= *minY &&
+                !(frame.origin.y == priorFieldOffset
+                  && frame.origin.x < priorTextField.frame.origin.x) ) {
+                    *minY = CGRectGetMinY(frame);
+                    *foundView = childView;
+                }
         } else {
             [self TPKeyboardAvoiding_findTextFieldAfterTextField:priorTextField beneathView:childView minY:minY foundView:foundView];
         }
