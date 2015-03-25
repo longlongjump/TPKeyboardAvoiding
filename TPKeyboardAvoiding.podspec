@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name     = 'TPKeyboardAvoiding'
-  s.version  = '1.2.4'
+  s.version  = '1.2.4.1'
   s.license  = 'zlib'
   s.platform = :ios
   s.summary  = 'A drop-in universal solution for moving text fields out of the way of the keyboard in iOS.'
