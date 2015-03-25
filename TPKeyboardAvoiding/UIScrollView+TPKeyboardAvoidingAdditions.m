@@ -173,7 +173,8 @@ static const int kStateKey;
 
 - (void)TPKeyboardAvoiding_findTextFieldAfterTextField:(UIView*)priorTextField beneathView:(UIView*)view minY:(CGFloat*)minY foundView:(UIView**)foundView {
     // Search recursively for text field or text view below priorTextField
-    CGFloat priorFieldOffset = CGRectGetMinY([self convertRect:priorTextField.frame fromView:priorTextField.superview]);
+    CGRect priorTextFieldRect = [self convertRect:priorTextField.frame fromView:priorTextField.superview];
+    CGFloat priorFieldOffset = CGRectGetMinY(priorTextFieldRect);
     NSArray *subviews = [view.subviews sortedArrayUsingComparator:^NSComparisonResult(UIView *obj1, UIView *obj2) {
         return obj1.frame.origin.x > obj2.frame.origin.x ? NSOrderedAscending : NSOrderedDescending;
     }];
@@ -186,7 +187,7 @@ static const int kStateKey;
                 && CGRectGetMinY(frame) >= priorFieldOffset
                 && CGRectGetMinY(frame) <= *minY &&
                 !(frame.origin.y == priorFieldOffset
-                  && frame.origin.x < priorTextField.frame.origin.x) ) {
+                  && frame.origin.x < priorTextFieldRect.origin.x) ) {
                     *minY = CGRectGetMinY(frame);
                     *foundView = childView;
                 }
